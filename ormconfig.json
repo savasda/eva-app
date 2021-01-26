@@ -1,0 +1,11 @@
+{
+	"type": "mongodb",
+	"url": "mongodb://localhost:27017/?readPreference=primary", 
+	"database": "eva",
+  "synchronize": true,
+	"logging": true,
+	"ssl": false,
+	"useUnifiedTopology": true,
+	"useNewUrlParser": true,
+	"entities": ["__dirname/**/*.entity.ts", "dist/**/*.entity.js"]
+}
