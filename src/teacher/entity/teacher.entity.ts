@@ -1,5 +1,5 @@
 import { ProgramEntity } from "src/program/entities/program.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ObjectIdColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('teacher')
 export class TeacherEntity {
@@ -22,7 +22,11 @@ export class TeacherEntity {
 	@UpdateDateColumn()
 	updated: Date;
 
-	@ManyToMany(() => ProgramEntity)
-	@JoinTable()
-	programs: Array<ProgramEntity>
+  @Column('array')
+	programs: ProgramEntity[]
+
+	@BeforeInsert()
+	checkPrograms() {
+		this.programs = []
+	}
 }

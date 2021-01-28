@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { AuthGuard } from 'src/shared/auth.guard';
 import { ValidationPipe } from 'src/shared/validation.pipe';
 import { TeacherDTO } from './entity/teacher.dto';
@@ -15,8 +15,8 @@ export class TeacherController {
 	}
 
 	@Get(':id')
-	getOne(@Param() id: string) {
-		return this.teacherService.getOne(id)
+	getOne(@Param() data: {id: string}) {
+		return this.teacherService.getOne(data.id)
 	}
 
 	@Post() 
@@ -24,6 +24,14 @@ export class TeacherController {
 	@UseGuards(new AuthGuard())
 	create(@Body() data: TeacherDTO) {
 		return this.teacherService.create(data);
+	}
+
+	@Put('bound/:id')
+	@UseGuards(new AuthGuard())
+	boundTeacherWithProgram(@Body() data: {programIds: string[]}, @Param() param: {id: string}) {
+		const { programIds } = data;
+		const { id } = param;
+		return this.teacherService.pushProgram(programIds, id);
 	}
 
 }

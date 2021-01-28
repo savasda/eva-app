@@ -1,3 +1,4 @@
+import { type } from 'os';
 import { TeacherEntity } from 'src/teacher/entity/teacher.entity';
 import {
   Entity,
@@ -7,6 +8,7 @@ import {
   ObjectIdColumn,
 	ManyToMany,
 	JoinTable,
+	BeforeInsert,
 } from 'typeorm';
 
 @Entity('program')
@@ -20,13 +22,19 @@ export class ProgramEntity {
   @UpdateDateColumn()
   updated: Date;
 
-  @Column('text')
+  @Column('text', {
+		unique: true
+	})
   name: string;
 
   @Column('text')
 	description: string;
 	
-	@ManyToMany(() => TeacherEntity)
-	@JoinTable()
+  @Column('array')
 	teachers: Array<TeacherEntity>
+
+	@BeforeInsert()
+	checkTeacher() {
+		this.teachers = []
+	}
 }

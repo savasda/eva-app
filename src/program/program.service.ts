@@ -4,6 +4,7 @@ import { MongoRepository } from 'typeorm';
 import { ProgramDTO } from './entities/program.dto';
 import { ProgramEntity } from './entities/program.entity';
 import { MESSAGE } from '../shared/messages';
+import { ProgramRO } from './entities/program.ro';
 
 @Injectable()
 export class ProgramService {
@@ -17,13 +18,13 @@ export class ProgramService {
     return await this.programRepository.find();
   }
 
-  async create(data: ProgramDTO) {
+  async create(data: ProgramDTO) : Promise<ProgramRO>{
     const program = await this.programRepository.create(data);
-    await this.programRepository.save(data);
+    await this.programRepository.save(program);
     return program;
   }
 
-  async read(id: string): Promise<ProgramDTO> {
+  async read(id: string): Promise<ProgramRO> {
 		const program = await this.programRepository.findOne(id);
 		if(!program) {
 			throw new HttpException(MESSAGE.NOT_FOUND, HttpStatus.NOT_FOUND);

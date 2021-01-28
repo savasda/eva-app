@@ -20,7 +20,9 @@ import { TeacherModule } from './teacher/teacher.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       ssl: false,
       useUnifiedTopology: true,
-      useNewUrlParser: true,
+			useNewUrlParser: true,
+			logging: true,
+			logger: 'debug'
     }),
     ProgramModule,
     UserModule,
