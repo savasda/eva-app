@@ -1,13 +1,33 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProgramEntity } from 'src/program/entities/program.entity';
-import { TeacherEntity } from './entity/teacher.entity';
+import { MongooseModule } from '@nestjs/mongoose';
+import { programSchema } from 'src/program/entities/program.entity';
+import { REPOSITORY } from 'src/shared/repository';
+import { teacherSchema } from './entity/teacher.entity';
 import { TeacherController } from './teacher.controller';
 import { TeacherService } from './teacher.service';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([TeacherEntity, ProgramEntity])],
-  controllers: [TeacherController],
+	imports: [
+		MongooseModule.forFeatureAsync([
+			{
+				name: REPOSITORY.TEACHER,
+				useFactory: () => {
+					const schema = teacherSchema;
+          schema.pre('save',  async function () { 
+						this.updated = new Date()
+					});
+          return schema;
+        },
+			},
+			{
+				name: REPOSITORY.PROGRAM,
+				useFactory: () => {
+					return programSchema;
+				}
+			}
+		])
+	],  
+	controllers: [TeacherController],
   providers: [TeacherService]
 })
 export class TeacherModule {}

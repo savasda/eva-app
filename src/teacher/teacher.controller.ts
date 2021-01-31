@@ -26,12 +26,11 @@ export class TeacherController {
 		return this.teacherService.create(data);
 	}
 
-	@Put('bound/:id')
+	@Put(':id')
 	@UseGuards(new AuthGuard())
-	boundTeacherWithProgram(@Body() data: {programIds: string[]}, @Param() param: {id: string}) {
-		const { programIds } = data;
-		const { id } = param;
-		return this.teacherService.pushProgram(programIds, id);
+	@UsePipes(new ValidationPipe())
+	updateProgram(@Param('id') id: string, @Body() data: Partial<TeacherDTO>) {
+		return this.teacherService.update(id, data);
 	}
 
 }

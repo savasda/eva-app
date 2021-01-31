@@ -9,21 +9,15 @@ import { HttpErrorFilter } from './shared/http-error.filter';
 import { AppService } from './app.service';
 import { LoggingIntercepr } from './shared/logger.interceptor';
 import { TeacherModule } from './teacher/teacher.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    ConfigModule,
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: process.env.MONGODB_CONNECTION_STRING,
-      database: process.env.MONGODB_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      ssl: false,
-      useUnifiedTopology: true,
-			useNewUrlParser: true,
-			logging: true,
-			logger: 'debug'
-    }),
+		ConfigModule,
+		MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING, {
+			useCreateIndex: true,
+			dbName: process.env.MONGODB_DATABASE
+		}),
     ProgramModule,
     UserModule,
     TeacherModule,

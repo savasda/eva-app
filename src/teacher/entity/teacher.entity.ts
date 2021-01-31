@@ -1,32 +1,42 @@
-import { ProgramEntity } from "src/program/entities/program.entity";
-import { BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ObjectIdColumn, UpdateDateColumn } from "typeorm";
-
-@Entity('teacher')
-export class TeacherEntity {
-	@ObjectIdColumn()
-	_id: string;
-
-	@Column({
-		type: 'text',
+import { ProgramEntity, programSchema } from "src/program/entities/program.entity";
+import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { REPOSITORY } from "src/shared/repository";
+@Schema()
+export class TeacherEntity extends Document {
+	@Prop({
+		type: String,
 	})
 	name: string;
 
-	@Column({
-		type: 'text',
+	@Prop({
+		type: String,
 	})
 	description: string;
 
-	@CreateDateColumn()
-	created: Date;
+	@Prop({
+		type: Date, 
+		default: Date.now
+	})
+  created: Date;
 
-	@UpdateDateColumn()
+  @Prop({
+		type: Date, 
+		default: Date.now
+	})
 	updated: Date;
-
-  @Column('array')
+	
+  @Prop({
+		type: [
+			{
+				type: [Types.ObjectId],
+				ref: REPOSITORY.PROGRAM,		
+				default: []
+			}
+		]
+	})
 	programs: ProgramEntity[]
 
-	@BeforeInsert()
-	checkPrograms() {
-		this.programs = []
-	}
 }
+
+export const teacherSchema = SchemaFactory.createForClass(TeacherEntity);

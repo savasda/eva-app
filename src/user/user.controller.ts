@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { ValidationPipe } from 'src/shared/validation.pipe';
 import { UserDTO } from './entity/user.dto';
 import { UserService } from './user.service';
@@ -8,6 +8,11 @@ export class UserController {
 
 	constructor(private userService: UserService) {
 
+	}
+
+	@Get()
+	getAll(){
+		return this.userService.showAll()
 	}
 
 	@Post('login')

@@ -1,50 +1,39 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
-import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
+import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Entity('user')
-export class UserEntity {
-	@ObjectIdColumn()
-	_id: string;
+@Schema()
+export class UserEntity extends Document{
 
-	@CreateDateColumn()
+  @Prop({
+		type: Date, 
+		default: Date.now
+	})
   created: Date;
 
-  @UpdateDateColumn()
+  @Prop({
+		type: Date, 
+		default: Date.now
+	})
 	updated: Date;
 	
-	@Column({
-		type: 'text',
-		unique: true
+	@Prop({
+		type: String,
+		unique: true,
+		index: true
 	})
 	username: string;
 
-	@Column()
+	@Prop({
+		type: String,
+	})
 	password: string;
 
-	@BeforeInsert()
-	async hasPassword() {
-		this.password = await bcrypt.hash(this.password, 10);
-	}
-
-	toResponseObject(showToken: boolean = true) {
-		const { _id, created, username, updated, token } = this;
-		const responseObj = { _id, created, username, updated };
-		if(showToken) {
-			responseObj['token'] = token;
-		} 
-		return responseObj;
-	}
-
-	async	comparePassword(attempt: string) {
-		return await bcrypt.compare(attempt, this.password);
-	}
-
-	private get token() {
-		const {username, password} = this;
-		return jwt.sign({
-			username, password
-		}, process.env.SECRET, {expiresIn: '7d'})
-	}
-	
+	@Prop({
+		type: String,
+	})
+	hash: string
 }
+
+
+
+export const UserSchema = SchemaFactory.createForClass(UserEntity);
