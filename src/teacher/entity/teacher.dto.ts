@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class TeacherDTO {
 	@IsNotEmpty()
@@ -8,4 +8,8 @@ export class TeacherDTO {
 	@IsNotEmpty()
 	@IsString()
 	description: string;
+
+	@IsArray()
+	@IsOptional()
+	programIds?: Array<string>;
 }
