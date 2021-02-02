@@ -23,11 +23,13 @@ export class UserService {
 	async login(data: UserDTO){
 		const { username, password} = data;
 		const user = await this.userRepository.findOne({username}).exec();
+		if(!user) {
+			throw new HttpException(`User with name ${username} doesn't exist`, HttpStatus.BAD_REQUEST)
+		}
 		const passIsCorrect = await bcrypt.compare(password, user.hash);
-		if(!user || !passIsCorrect) {	
+		if(!passIsCorrect) {	
 			throw new HttpException('Username/password is incorrect', HttpStatus.BAD_REQUEST)
 		}
-	
 		return this.toResponseObject(user);
 	}
 
