@@ -2,10 +2,14 @@ import { ProgramEntity, programSchema } from "src/program/entities/program.entit
 import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { REPOSITORY } from "src/shared/repository";
+import { SeoEntity } from "src/shared/entity/seo.entity";
 @Schema()
 export class TeacherEntity extends Document {
 	@Prop({
 		type: String,
+		unique : true, 
+		required : true, 
+		dropDups: true
 	})
 	name: string;
 
@@ -15,14 +19,20 @@ export class TeacherEntity extends Document {
 	description: string;
 
 	@Prop({
+		type: String,
+		index: true,
+		unique: true
+	})
+	alias: string;
+
+	@Prop({
 		type: Date, 
 		default: Date.now
 	})
   created: Date;
 
   @Prop({
-		type: Date, 
-		default: Date.now
+		type: Date
 	})
 	updated: Date;
 	
@@ -36,6 +46,13 @@ export class TeacherEntity extends Document {
 		]
 	})
 	programs: ProgramEntity[]
+
+
+	@Prop({
+		type: Types.ObjectId,
+		ref: REPOSITORY.SEO
+	})
+	seo: SeoEntity
 
 }
 

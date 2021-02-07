@@ -1,4 +1,5 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { SeoDTO } from 'src/shared/entity/seo.dto';
 
 export class ProgramDTO {
 	@IsString()
@@ -10,4 +11,7 @@ export class ProgramDTO {
 	@IsArray()
 	@IsOptional()
 	teacherIds?: Array<string>;
+
+	@IsNotEmpty()
+	seo: SeoDTO
 }

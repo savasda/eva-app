@@ -6,11 +6,14 @@ import { Model } from 'mongoose';
 import { REPOSITORY } from 'src/shared/repository';
 import { TeacherDTO } from './entity/teacher.dto';
 import { ProgramEntity } from 'src/program/entities/program.entity';
+import { SeoEntity } from 'src/shared/entity/seo.entity';
+import { SeoService } from 'src/seo/seo.service';
 
 @Injectable()
 export class TeacherService {
 
 	constructor(
+		private seoService: SeoService,
 		@InjectModel(REPOSITORY.PROGRAM) private programRepository: Model<ProgramEntity>,
 		@InjectModel(REPOSITORY.TEACHER) private teacherRepository: Model<TeacherEntity>
 	) {}
@@ -33,7 +36,9 @@ export class TeacherService {
 				path: 'programs',
 				select: { 'teachers': 0},
 			}
-		).exec();
+		).populate('seo')
+		.exec();
+
 		if(!teacher) {
 			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
 		}
@@ -41,7 +46,16 @@ export class TeacherService {
 	}
 
 	async create(data: TeacherDTO): Promise<TeacherEntity> {
+		const {seo} = data;
 		const teacher = await this.teacherRepository.create(data);
+		const seoEntity = await this.seoService.create(seo);
+
+		teacher.updateOne({
+			$set: {
+				seo: seoEntity._id
+			}
+		}).exec();
+
 		return teacher;
 	}
 

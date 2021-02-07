@@ -1,5 +1,6 @@
 export enum REPOSITORY {
 	USER = 'User',
 	TEACHER = 'Teacher',
-	PROGRAM = 'Program'
+	PROGRAM = 'Program',
+	SEO = 'Seo'
 }
