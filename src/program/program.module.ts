@@ -18,10 +18,12 @@ const slug = require('slug')
 					const schema = programSchema;
           schema.pre('save',  async function () { 
 						this.updated = new Date();
+					});
+					schema.post('save', async function() {
 						if(!this.alias && this.name) {
 							this.alias = slug(this.name, {lower: true});
 						}
-					});
+					})
           return schema;
         },
 			},

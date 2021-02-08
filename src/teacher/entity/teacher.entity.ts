@@ -19,9 +19,7 @@ export class TeacherEntity extends Document {
 	description: string;
 
 	@Prop({
-		type: String,
-		index: true,
-		unique: true
+		type: String
 	})
 	alias: string;
 
