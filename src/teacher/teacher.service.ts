@@ -8,6 +8,7 @@ import { TeacherDTO } from './entity/teacher.dto';
 import { ProgramEntity } from 'src/program/entities/program.entity';
 import { SeoEntity } from 'src/shared/entity/seo.entity';
 import { SeoService } from 'src/seo/seo.service';
+const slug = require('slug')
 
 @Injectable()
 export class TeacherService {
@@ -52,7 +53,8 @@ export class TeacherService {
 
 		teacher.updateOne({
 			$set: {
-				seo: seoEntity._id
+				seo: seoEntity._id,
+				alias: slug(teacher.name, {lower: true})
 			}
 		}).exec();
 

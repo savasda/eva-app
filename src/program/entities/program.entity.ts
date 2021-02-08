@@ -19,7 +19,8 @@ export class ProgramEntity extends Document {
 	description: string;
 
 	@Prop({
-		type: String
+		type: String,
+		index: true
 	})
 	alias: string;
 

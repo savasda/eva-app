@@ -7,6 +7,7 @@ import { REPOSITORY } from 'src/shared/repository';
 import { Model } from 'mongoose';
 import { TeacherEntity } from 'src/teacher/entity/teacher.entity';
 import { SeoService } from 'src/seo/seo.service';
+const slug = require('slug')
 
 @Injectable()
 export class ProgramService {
@@ -33,7 +34,8 @@ export class ProgramService {
 	
 		program.updateOne({
 			$set: {
-				seo: seoEntity._id
+				seo: seoEntity._id,
+				alias: slug(program.name, {lower: true})
 			}
 		}).exec();
 
