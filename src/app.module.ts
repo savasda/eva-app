@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import { LoggingIntercepr } from './shared/logger.interceptor';
 import { TeacherModule } from './teacher/teacher.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SeoModule } from './seo/seo.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     ProgramModule,
     UserModule,
     TeacherModule,
+    SeoModule,
   ],
   controllers: [AppController],
   providers: [

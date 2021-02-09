@@ -5,6 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "14.15.4"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -33,10 +36,12 @@
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
+    "limax": "^3.0.0",
     "mongoose": "^5.11.14",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
+    "slug": "^4.0.2",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.30"
   },

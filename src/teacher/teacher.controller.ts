@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { AuthGuard } from 'src/shared/auth.guard';
 import { ValidationPipe } from 'src/shared/validation.pipe';
 import { TeacherDTO } from './entity/teacher.dto';
@@ -33,4 +33,9 @@ export class TeacherController {
 		return this.teacherService.update(id, data);
 	}
 
+	@Delete(':id')
+	@UseGuards(new AuthGuard())
+	deleteProgram(@Param('id') id: string) {
+		this.teacherService.delete(id)
+	}
 }

@@ -6,10 +6,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { REPOSITORY } from 'src/shared/repository';
 import { Model } from 'mongoose';
 import { TeacherEntity } from 'src/teacher/entity/teacher.entity';
+import { SeoService } from 'src/seo/seo.service';
+const slug = require('slug')
 
 @Injectable()
 export class ProgramService {
 	constructor(
+		private seoService: SeoService,
 		@InjectModel(REPOSITORY.PROGRAM) private programRepository: Model<ProgramEntity>,
 		@InjectModel(REPOSITORY.TEACHER) private teacherRepository: Model<TeacherEntity>
 	) {}
@@ -25,7 +28,17 @@ export class ProgramService {
   }
 
   async create(data: ProgramDTO) : Promise<ProgramEntity>{
+		const { seo } = data;
 		const program = await this.programRepository.create(data);
+		const seoEntity = await this.seoService.create(seo);
+	
+		program.updateOne({
+			$set: {
+				seo: seoEntity._id,
+				alias: slug(program.name, {lower: true})
+			}
+		}).exec();
+
     return program;
   }
 
@@ -37,7 +50,7 @@ export class ProgramService {
 				path: 'teachers',
 				select: { 'programs': 0},
 			}
-		).exec();
+		).populate('seo').exec();
 
 		if(!program) {
 			throw new HttpException(MESSAGE.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -60,7 +73,7 @@ export class ProgramService {
 			{ 
 				$set: { teachers: teachers.map(t => t.id)},
 				name,
-				description 
+				description
 			},
 			{ new: true, useFindAndModify: false }
 		);

@@ -6,11 +6,15 @@ import { Model } from 'mongoose';
 import { REPOSITORY } from 'src/shared/repository';
 import { TeacherDTO } from './entity/teacher.dto';
 import { ProgramEntity } from 'src/program/entities/program.entity';
+import { SeoEntity } from 'src/shared/entity/seo.entity';
+import { SeoService } from 'src/seo/seo.service';
+const slug = require('slug')
 
 @Injectable()
 export class TeacherService {
 
 	constructor(
+		private seoService: SeoService,
 		@InjectModel(REPOSITORY.PROGRAM) private programRepository: Model<ProgramEntity>,
 		@InjectModel(REPOSITORY.TEACHER) private teacherRepository: Model<TeacherEntity>
 	) {}
@@ -21,7 +25,10 @@ export class TeacherService {
 		.populate({
 			path: 'programs',
 			select: { 'teachers': 0},
-		}).exec();
+		})
+		.populate('seo')
+		.exec();
+
 		return teachers;
 	}
 
@@ -33,7 +40,9 @@ export class TeacherService {
 				path: 'programs',
 				select: { 'teachers': 0},
 			}
-		).exec();
+		).populate('seo')
+		.exec();
+
 		if(!teacher) {
 			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
 		}
@@ -41,14 +50,24 @@ export class TeacherService {
 	}
 
 	async create(data: TeacherDTO): Promise<TeacherEntity> {
+		const {seo} = data;
 		const teacher = await this.teacherRepository.create(data);
+		const seoEntity = await this.seoService.create(seo);
+
+		teacher.updateOne({
+			$set: {
+				seo: seoEntity._id,
+				alias: slug(teacher.name, {lower: true})
+			}
+		}).exec();
+
 		return teacher;
 	}
 
 
 
   async update(id: string, data: Partial<TeacherDTO>): Promise<TeacherEntity> {
-		const { name, description, programIds } = data;
+		const { name, description, programIds, seo } = data;
 		let programs = [];
 		
 		if(programIds?.length) {
@@ -56,16 +75,22 @@ export class TeacherService {
 				{_id: {$in: programIds},
 			});
 		}
+
 	
 		const teacher = await this.teacherRepository.findByIdAndUpdate(
 			{_id: id},
 			{ 
-				$set: { programs: programs.map(t => t.id)},
+				$set: { 
+					programs: programs.map(t => t.id),
+				},
 				name,
-				description 
+				description,
+				updated: new Date(),
 			},
 			{ new: true, useFindAndModify: false }
 		);
+
+		await this.seoService.update(teacher.seo);
 
 		if(programIds?.length) {
 			programs.forEach(t => t.updateOne({
@@ -84,40 +109,16 @@ export class TeacherService {
 		return teacher;
   }
 
-	// async pushProgram(programIds: string[], teacherId: string): Promise<TeacherEntity> {
+	async delete(id: string) {
+		const teacher = await this.teacherRepository.findById(id);
+		if(!teacher) {
+			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
+		}
 
-	// 	const teacher = await this.teacherRepository.findOne({
-	// 		where: {
-	// 			_id: new ObjectID(teacherId)
-	// 		},
-	// 		relations: ['programs'],
-	// 	});
+		await this.teacherRepository.deleteOne(teacher);
 
-	// 	const programs = await this.programsRepository.find({
-	// 		where: {
-	// 			_id: {$in: programIds.map(id => new ObjectID(id))}
-	// 		}
-	// 	});
-
-	// 	await this.teacherRepository.findOneAndUpdate({
-	// 		_id: new ObjectID(teacherId)
-	// 	}, {
-	// 		$addToSet: {programs: {$each: programs}}
-	// 	}, {
-	// 		upsert:true 
-	// 	});
-
-	// 	programs.forEach(async program => {
-	// 		await this.programsRepository.findOneAndUpdate({
-	// 			_id: new ObjectID(program._id)
-	// 		}, {
-	// 			$addToSet: {teachers: teacher}
-	// 		},  {
-	// 			upsert:true
-	// 		})
-	// 	});
-
-	// 	return teacher;
-
-	// }
+		return {
+			deleted: true
+		}
+	}
 }
