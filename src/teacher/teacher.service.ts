@@ -28,7 +28,7 @@ export class TeacherService {
 		})
 		.populate('seo')
 		.exec();
-		
+
 		return teachers;
 	}
 
@@ -67,7 +67,7 @@ export class TeacherService {
 
 
   async update(id: string, data: Partial<TeacherDTO>): Promise<TeacherEntity> {
-		const { name, description, programIds } = data;
+		const { name, description, programIds, seo } = data;
 		let programs = [];
 		
 		if(programIds?.length) {
@@ -75,16 +75,22 @@ export class TeacherService {
 				{_id: {$in: programIds},
 			});
 		}
+
 	
 		const teacher = await this.teacherRepository.findByIdAndUpdate(
 			{_id: id},
 			{ 
-				$set: { programs: programs.map(t => t.id)},
+				$set: { 
+					programs: programs.map(t => t.id),
+				},
 				name,
-				description 
+				description,
+				updated: new Date(),
 			},
 			{ new: true, useFindAndModify: false }
 		);
+
+		await this.seoService.update(teacher.seo);
 
 		if(programIds?.length) {
 			programs.forEach(t => t.updateOne({
