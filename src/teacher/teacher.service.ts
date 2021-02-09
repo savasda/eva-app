@@ -100,40 +100,16 @@ export class TeacherService {
 		return teacher;
   }
 
-	// async pushProgram(programIds: string[], teacherId: string): Promise<TeacherEntity> {
+	async delete(id: string) {
+		const teacher = await this.teacherRepository.findById(id);
+		if(!teacher) {
+			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
+		}
 
-	// 	const teacher = await this.teacherRepository.findOne({
-	// 		where: {
-	// 			_id: new ObjectID(teacherId)
-	// 		},
-	// 		relations: ['programs'],
-	// 	});
-
-	// 	const programs = await this.programsRepository.find({
-	// 		where: {
-	// 			_id: {$in: programIds.map(id => new ObjectID(id))}
-	// 		}
-	// 	});
-
-	// 	await this.teacherRepository.findOneAndUpdate({
-	// 		_id: new ObjectID(teacherId)
-	// 	}, {
-	// 		$addToSet: {programs: {$each: programs}}
-	// 	}, {
-	// 		upsert:true 
-	// 	});
-
-	// 	programs.forEach(async program => {
-	// 		await this.programsRepository.findOneAndUpdate({
-	// 			_id: new ObjectID(program._id)
-	// 		}, {
-	// 			$addToSet: {teachers: teacher}
-	// 		},  {
-	// 			upsert:true
-	// 		})
-	// 	});
-
-	// 	return teacher;
-
-	// }
+		await this.teacherRepository.deleteOne(teacher);
+		
+		return {
+			deleted: true
+		}
+	}
 }
