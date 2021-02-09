@@ -25,7 +25,10 @@ export class TeacherService {
 		.populate({
 			path: 'programs',
 			select: { 'teachers': 0},
-		}).exec();
+		})
+		.populate('seo')
+		.exec();
+		
 		return teachers;
 	}
 
@@ -107,7 +110,7 @@ export class TeacherService {
 		}
 
 		await this.teacherRepository.deleteOne(teacher);
-		
+
 		return {
 			deleted: true
 		}
