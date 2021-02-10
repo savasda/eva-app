@@ -116,6 +116,14 @@ export class TeacherService {
 			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
 		}
 
+		await this.programRepository.find(
+			{ teachers: { $exists: true, $not: {$size: 0} } }
+		).updateMany({
+			$pull: {teachers: teacher.id}
+		});
+
+		const seoId: any = teacher.seo;
+		await this.seoService.delete(seoId);
 		await this.teacherRepository.deleteOne(teacher);
 
 		return {

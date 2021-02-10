@@ -106,7 +106,10 @@ export class ProgramService {
 				$pull: {programs: program.id}
 			});
 		
+			const seoId: any = program.seo;
+			await this.seoService.delete(seoId);
 			await this.programRepository.findOneAndDelete(program.id);
+
 			
 			return {
 				id: program.id,
