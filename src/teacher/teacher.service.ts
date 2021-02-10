@@ -90,7 +90,8 @@ export class TeacherService {
 			{ new: true, useFindAndModify: false }
 		);
 
-		await this.seoService.update(teacher.seo);
+		const seoId: any = teacher.seo;
+		await this.seoService.update(seoId, seo);
 
 		if(programIds?.length) {
 			programs.forEach(t => t.updateOne({

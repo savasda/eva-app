@@ -11,14 +11,16 @@ export class SeoService {
 		@InjectModel(REPOSITORY.SEO) private seoRepository: Model<SeoEntity>,
 	) {}
 
-	async update(data: SeoEntity): Promise<SeoEntity> {
-		const {_id} = data;
-		const seo = await this.seoRepository.findById(_id);
-		if(!seo) {
-			throw new HttpException(`seo item with id ${_id} doesn't exist`, HttpStatus.NOT_FOUND)
-		}	
-		seo.updateOne(data).exec()
-		return seo;
+	async update(id: string, data: SeoDTO): Promise<SeoEntity> {
+		const {title, keywords, description} = data;
+		return await this.seoRepository.findByIdAndUpdate({
+			_id: id
+		}, {
+			title,
+			description,
+			$set: {keywords: keywords}
+		}, 
+		{ new: true, useFindAndModify: false });
 	}
 
 	async create(data: SeoDTO): Promise<SeoEntity> {
