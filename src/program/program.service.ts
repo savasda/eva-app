@@ -47,9 +47,8 @@ export class ProgramService {
   }
 
   async read(id: string): Promise<ProgramEntity> {
-		const program = await this.programRepository.findOne({
-			_id: id
-		}).populate(
+		const program = await this.programRepository.findById(id)
+		.populate(
 			{
 				path: 'teachers',
 				select: { 'programs': 0},

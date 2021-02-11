@@ -67,7 +67,7 @@ export class TeacherService {
 
 
   async update(id: string, data: Partial<TeacherDTO>): Promise<TeacherEntity> {
-		const { name, description, programIds, seo } = data;
+		const { name, description, programIds, seo, imagePath } = data;
 		let programs = [];
 		
 		if(programIds?.length) {
@@ -82,10 +82,12 @@ export class TeacherService {
 			{ 
 				$set: { 
 					programs: programs.map(t => t.id),
+					alias: slug(name, {lower: true}),
 				},
 				name,
 				description,
 				updated: new Date(),
+				imagePath
 			},
 			{ new: true, useFindAndModify: false }
 		);

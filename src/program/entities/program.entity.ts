@@ -51,6 +51,10 @@ export class ProgramEntity extends Document {
 	})
 	seo: SeoEntity
 
+	@Prop({
+		type: String
+	})
+	imagePath: string
 }
 
 export const programSchema = SchemaFactory.createForClass(ProgramEntity);
