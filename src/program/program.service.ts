@@ -23,7 +23,9 @@ export class ProgramService {
 			.populate({
 				path: 'teachers',
 				select: { 'programs': 0},
-			}).exec();
+			})
+			.populate('seo')
+			.exec();
 
   }
 
@@ -37,7 +39,9 @@ export class ProgramService {
 				seo: seoEntity._id,
 				alias: slug(program.name, {lower: true})
 			}
-		}).exec();
+		})
+		.populate('seo')
+		.exec();
 
     return program;
   }
