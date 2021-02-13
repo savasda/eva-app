@@ -50,14 +50,15 @@ export class TeacherService {
 	}
 
 	async create(data: TeacherDTO): Promise<TeacherEntity> {
-		const {seo} = data;
+		const {seo, imagePath} = data;
 		const teacher = await this.teacherRepository.create(data);
 		const seoEntity = await this.seoService.create(seo);
 
 		teacher.updateOne({
 			$set: {
 				seo: seoEntity._id,
-				alias: slug(teacher.name, {lower: true})
+				alias: slug(teacher.name, {lower: true}),
+				imagePath
 			}
 		}).exec();
 

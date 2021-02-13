@@ -30,14 +30,15 @@ export class ProgramService {
   }
 
   async create(data: ProgramDTO) : Promise<ProgramEntity>{
-		const { seo } = data;
+		const { seo, imagePath} = data;
 		const program = await this.programRepository.create(data);
 		const seoEntity = await this.seoService.create(seo);
 	
 		program.updateOne({
 			$set: {
 				seo: seoEntity._id,
-				alias: slug(program.name, {lower: true})
+				alias: slug(program.name, {lower: true}),
+				imagePath
 			}
 		})
 		.populate('seo')
