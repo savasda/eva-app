@@ -62,7 +62,7 @@ export class ProgramService {
   }
 
   async update(id: string, data: Partial<ProgramDTO>): Promise<ProgramEntity> {
-		const { name, description, teacherIds } = data;
+		const { name, description, teacherIds, imagePath } = data;
 		let teachers = [];
 		
 		if(teacherIds?.length) {
@@ -76,7 +76,8 @@ export class ProgramService {
 			{ 
 				$set: { teachers: teachers.map(t => t.id)},
 				name,
-				description
+				description,
+				imagePath
 			},
 			{ new: true, useFindAndModify: false }
 		);

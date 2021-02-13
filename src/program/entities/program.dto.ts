@@ -19,4 +19,8 @@ export class ProgramDTO {
 	@IsNotEmpty()
 	@ApiProperty()
 	seo: SeoDTO
+	
+	@IsString()
+	@ApiProperty()
+	imagePath: string
 }
