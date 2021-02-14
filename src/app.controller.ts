@@ -15,7 +15,7 @@ export class AppController {
     res.sendFile(fileId, { root: 'static/images/teachers'});
   }
 
-  @Get('/static/images/programs/:fileId')
+	@Get('/static/images/programs/:fileId')
   async program(@Param('fileId') fileId, @Res() res): Promise<any> {
     res.sendFile(fileId, { root: 'static/images/programs'});
   }

@@ -3,7 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SeoModule } from 'src/seo/seo.module';
 import { REPOSITORY } from 'src/shared/repository';
 import { teacherSchema } from 'src/teacher/entity/teacher.entity';
-import { ProgramEntity, programSchema } from './entities/program.entity';
+import { priceSchema } from './entities/price.entity';
+import { programSchema } from './entities/program.entity';
+import { scheduleSchema } from './entities/schedule.entity';
 import { ProgramController } from './program.controller';
 import { ProgramService } from './program.service';
 
@@ -25,6 +27,18 @@ import { ProgramService } from './program.service';
 				name: REPOSITORY.TEACHER,
 				useFactory: () => {
 					return teacherSchema;
+				}
+			},
+			{
+				name: REPOSITORY.PRICE,
+				useFactory: () => {
+					return priceSchema
+				}
+			},
+			{
+				name: REPOSITORY.SCHEDULE,
+				useFactory: () => {
+					return scheduleSchema
 				}
 			}
 		])

@@ -3,6 +3,8 @@ import { Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import { TeacherEntity } from 'src/teacher/entity/teacher.entity';
 import { REPOSITORY } from 'src/shared/repository';
 import { SeoEntity } from 'src/shared/entity/seo.entity';
+import { PriceEntity } from './price.entity';
+import { ScheduleEntity } from './schedule.entity';
 @Schema()
 export class ProgramEntity extends Document {
 	@Prop({
@@ -46,6 +48,15 @@ export class ProgramEntity extends Document {
 	teachers: TeacherEntity[];
 
 	@Prop({
+		type: [{
+			type: Types.ObjectId,
+			ref: REPOSITORY.SCHEDULE,
+			default: []
+		}]
+	})
+	scheduls: string[]
+
+	@Prop({
 		type: Types.ObjectId,
 		ref: REPOSITORY.SEO
 	})
@@ -54,7 +65,14 @@ export class ProgramEntity extends Document {
 	@Prop({
 		type: String
 	})
-	imagePath: string
+	imagePath: string;
+
+	@Prop({
+		type: Types.ObjectId,
+		ref: REPOSITORY.PRICE
+	})
+	price: PriceEntity
+
 }
 
 export const programSchema = SchemaFactory.createForClass(ProgramEntity);
