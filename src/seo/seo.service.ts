@@ -30,11 +30,9 @@ export class SeoService {
 
 	async delete(id: string) {
 		const seo = await this.seoRepository.findById(id);
-		if(!seo) {
-			throw new HttpException(`seo item with id ${id} doesn't exist`, HttpStatus.NOT_FOUND)
+		if(seo) {
+			await  this.seoRepository.deleteOne(seo);
 		}
-
-		await  this.seoRepository.deleteOne(seo);
 	}
 
 }

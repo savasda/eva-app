@@ -22,7 +22,7 @@ export class ProgramService {
 
 
   async getAllPrograms(): Promise<Array<ProgramEntity>> {
-		return await this.programRepository.find()
+		return await this.programRepository.find({}).sort({updated: -1})
 			.populate({
 				path: 'teachers',
 				select: { 'programs': 0},
