@@ -53,6 +53,11 @@ export class TeacherEntity extends Document {
 	})
 	seo: SeoEntity
 
+	@Prop({
+		type: String
+	})
+	imagePath: string
+
 }
 
 export const teacherSchema = SchemaFactory.createForClass(TeacherEntity);

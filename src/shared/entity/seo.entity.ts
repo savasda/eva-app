@@ -16,7 +16,7 @@ export class SeoEntity extends Document {
 	@Prop({type: [{
 		type: String,
 	}]})
-	keywords: string;
+	keywords: string[];
 
 }
 

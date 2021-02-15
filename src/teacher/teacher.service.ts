@@ -50,14 +50,15 @@ export class TeacherService {
 	}
 
 	async create(data: TeacherDTO): Promise<TeacherEntity> {
-		const {seo} = data;
+		const {seo, imagePath} = data;
 		const teacher = await this.teacherRepository.create(data);
 		const seoEntity = await this.seoService.create(seo);
 
 		teacher.updateOne({
 			$set: {
 				seo: seoEntity._id,
-				alias: slug(teacher.name, {lower: true})
+				alias: slug(teacher.name, {lower: true}),
+				imagePath
 			}
 		}).exec();
 
@@ -67,7 +68,7 @@ export class TeacherService {
 
 
   async update(id: string, data: Partial<TeacherDTO>): Promise<TeacherEntity> {
-		const { name, description, programIds, seo } = data;
+		const { name, description, programIds, seo, imagePath } = data;
 		let programs = [];
 		
 		if(programIds?.length) {
@@ -82,15 +83,18 @@ export class TeacherService {
 			{ 
 				$set: { 
 					programs: programs.map(t => t.id),
+					alias: slug(name, {lower: true}),
 				},
 				name,
 				description,
 				updated: new Date(),
+				imagePath
 			},
 			{ new: true, useFindAndModify: false }
 		);
 
-		await this.seoService.update(teacher.seo);
+		const seoId: any = teacher.seo;
+		await this.seoService.update(seoId, seo);
 
 		if(programIds?.length) {
 			programs.forEach(t => t.updateOne({
@@ -115,6 +119,14 @@ export class TeacherService {
 			throw new HttpException('Teacher does not exist', HttpStatus.NOT_FOUND)
 		}
 
+		await this.programRepository.find(
+			{ teachers: { $exists: true, $not: {$size: 0} } }
+		).updateMany({
+			$pull: {teachers: teacher.id}
+		});
+
+		const seoId: any = teacher.seo;
+		await this.seoService.delete(seoId);
 		await this.teacherRepository.deleteOne(teacher);
 
 		return {
