@@ -140,7 +140,7 @@ export class ProgramService {
 
 		if(price) {
 			await this.priceRepository.findByIdAndUpdate({
-				_id: program.price._id
+				_id: program.price
 			}, price);
 		}
 
