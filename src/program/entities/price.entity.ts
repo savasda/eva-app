@@ -5,11 +5,13 @@ import { Document, Types } from 'mongoose';
 export class PriceEntity extends Document {
 	@Prop({
 		type: Number,
+		default: 0
 	})
 	for4: number;
 
 	@Prop({
 		type: Number,
+		default: 0
 	})
 	for8: number;
 }
