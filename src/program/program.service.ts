@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { TeacherEntity } from 'src/teacher/entity/teacher.entity';
 import { SeoService } from 'src/seo/seo.service';
 import { ScheduleEntity } from './entities/schedule.entity';
+import { PriceEntity } from './entities/price.entity';
 const slug = require('slug')
 
 @Injectable()
@@ -16,7 +17,7 @@ export class ProgramService {
 		private seoService: SeoService,
 		@InjectModel(REPOSITORY.PROGRAM) private programRepository: Model<ProgramEntity>,
 		@InjectModel(REPOSITORY.TEACHER) private teacherRepository: Model<TeacherEntity>,
-		@InjectModel(REPOSITORY.PRICE) private priceRepository: Model<TeacherEntity>,
+		@InjectModel(REPOSITORY.PRICE) private priceRepository: Model<PriceEntity>,
 		@InjectModel(REPOSITORY.SCHEDULE) private scheduleRepository: Model<ScheduleEntity>
 	) {}
 
@@ -90,7 +91,7 @@ export class ProgramService {
   }
 
   async update(id: string, data: Partial<ProgramDTO>): Promise<ProgramEntity> {
-		const { name, description, teacherIds, imagePath, price, scheduls } = data;
+		const { name, description, teacherIds, imagePath, price, seo, scheduls } = data;
 		let teachers = [];
 		
 		if(teacherIds?.length) {
@@ -142,6 +143,11 @@ export class ProgramService {
 			await this.priceRepository.findByIdAndUpdate({
 				_id: program.price
 			}, price);
+		}
+
+		if(seo) {
+			const id: any = program.seo;
+			await this.seoService.update(id, seo);
 		}
 
 
