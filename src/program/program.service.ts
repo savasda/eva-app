@@ -39,15 +39,29 @@ export class ProgramService {
 			name, description, imagePath
 		});
 		const seoEntity = await this.seoService.create(seo);
-		const priceEntity = await this.priceRepository.create(price);
-		const scheduleEntity = await this.scheduleRepository.insertMany(scheduls);
+		
+		if(price) {
+			const priceEntity = await this.priceRepository.create(price);
+			await program.updateOne({
+				$set: {
+					price: priceEntity._id,
+				}
+			}).exec()
+		}
+
+		if(scheduls) {
+			const scheduleEntity = await this.scheduleRepository.insertMany(scheduls);
+			await program.updateOne({
+				$set: {
+					scheduls: scheduleEntity.map(el => el._id)
+				}
+			}).exec()
+		}
 
 		await program.updateOne({
 			$set: {
 				seo: seoEntity._id,
-				alias: slug(program.name, {lower: true}),
-				price: priceEntity._id,
-				scheduls: scheduleEntity.map(el => el._id)
+				alias: slug(program.name, {lower: true})
 			}
 		}).exec()
 	
@@ -97,7 +111,7 @@ export class ProgramService {
 		);
 
 
-		if(scheduls.length) {
+		if(scheduls?.length) {
 
 			scheduls.forEach(async entity => {
 				if(entity._id) {
